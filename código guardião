@@ -1,0 +1,122 @@
+using UnityEngine;
+
+public class GuardiaoIA : MonoBehaviour
+{
+    //A)
+    public enum Estados 
+    {
+        Patrol,             
+        Alert,             
+        Chase,              
+        Attack,            
+        CallReinforcements, 
+        Retreat,           
+        Dead               
+    }
+
+
+    //C)
+    public Estados estadoAtual = Estados.Patrol; 
+
+
+    public Transform player;  
+    public float vida = 100f;   
+
+    void Update() 
+    {
+
+        float dist = Vector3.Distance(transform.position, player.position); 
+
+
+        if (vida <= 0) 
+        {
+            estadoAtual = Estados.Dead; 
+        }
+
+
+        switch (estadoAtual) 
+        {
+            case Estados.Patrol: 
+                Patrol(); 
+
+                if (dist < 20f) 
+                    estadoAtual = Estados.Alert; 
+                break; 
+
+            case Estados.Alert: 
+                Alert(); 
+
+                if (dist < 10f) 
+                    estadoAtual = Estados.Chase; 
+                break;
+
+            case Estados.Chase: 
+                Chase(); 
+
+                if (vida <= 20f) 
+                    estadoAtual = Estados.Retreat; 
+                else if (vida <= 40f) 
+                    estadoAtual = Estados.CallReinforcements; 
+                else if (dist < 3f || dist <= 10f) 
+                    estadoAtual = Estados.Attack; 
+                break;
+
+            case Estados.Attack: 
+                Attack(dist); 
+
+                estadoAtual = Estados.Chase; 
+                break;
+
+            case Estados.CallReinforcements: 
+                CallReinforcements(); 
+
+                estadoAtual = Estados.Chase; 
+                break;
+
+            case Estados.Retreat: 
+                Retreat(); 
+
+                if (dist < 5f) 
+                    estadoAtual = Estados.Chase; 
+                break;
+
+            case Estados.Dead: 
+                Die(); 
+                break;
+        }
+    }
+
+
+    void Patrol()
+    {
+        Debug.Log("patrulhando..."); 
+    }
+    void Alert()
+    {
+        Debug.Log("guardiao se alertou");
+    }
+    void Chase()
+    {
+        Debug.Log("guardiao perseguindo");
+    }
+    void Attack(float dist)
+
+    {
+        if (dist < 3f) 
+            Debug.Log("guardiao atacando de perto"); 
+        else if (dist <= 10f) 
+            Debug.Log("guardiao atacando de longe"); 
+    }
+    void CallReinforcements()
+    {
+        Debug.Log("guardiao chamando reforcos");
+    }
+    void Retreat()
+    {
+        Debug.Log("guardiao fugindo");
+    }
+    void Die()
+    {
+        Debug.Log("guardiao morreu, f no chat");
+    }
+}
