@@ -1,0 +1,120 @@
+using UnityEngine;
+
+public class BossIA : MonoBehaviour
+{
+
+    //A)
+    public enum Estados
+    {
+        Idle,           
+        Chase,          
+        Attack,         
+        SpecialAttack,  
+        Recover,        
+        Dead         
+    }
+
+    public Estados estadoAtual = Estados.Idle;
+
+
+    //C)
+    public Transform player;
+    public float vida = 100;
+
+    public float cooldownSPAttack = 5f;
+    private float cooldownTimer = 0f;
+
+    void Update()
+    {
+        cooldownTimer -= Time.deltaTime;
+
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        if (vida <= 0)
+        {
+            estadoAtual = Estados.Dead;
+        }
+
+        switch (estadoAtual)
+        {
+            case Estados.Idle:
+
+                if (dist < 15)
+                {
+                    estadoAtual = Estados.Chase;
+                } 
+                break;
+
+
+            case Estados.Chase:
+
+                Chase();
+
+                if (vida <= 20f)
+                {
+                    estadoAtual = Estados.Recover;
+                }
+                else if (vida <= 50f && cooldownTimer <= 0)
+                {
+                    estadoAtual = Estados.SpecialAttack;
+                }
+                else if (dist < 3f || dist <= 10f)
+                {
+                    estadoAtual = Estados.Attack; 
+                }
+                break;
+
+
+            case Estados.Attack:
+                Attack();
+                estadoAtual = Estados.Chase; 
+                break;
+
+
+            case Estados.SpecialAttack:
+                SpecialAttack();
+                cooldownTimer = cooldownSPAttack;
+                estadoAtual = Estados.Chase;
+                break;
+
+
+            case Estados.Recover:
+                Recover();
+
+                if (dist < 5f)
+                {
+                    estadoAtual = Estados.Chase; 
+                }
+                    
+                break;
+
+
+            case Estados.Dead:
+                Die();
+                break;
+        }
+    }
+
+
+    void Chase() 
+    {
+        Debug.Log("correndo atras do player");
+    }
+    void Attack()
+    {
+        Debug.Log("soco");
+    }
+    void SpecialAttack()
+    {
+        Debug.Log("atacadao");
+    }
+    void Recover() 
+    { 
+        Debug.Log("metendo o pe pra se recuperar"); 
+    }
+    void Die()
+    {
+        Debug.Log("se morio");
+    }
+
+}
